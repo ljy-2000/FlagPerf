@@ -97,8 +97,7 @@ def format_example(df, idx, include_answer=True):
 class mmlu(Dataset):
 
     def __init__(self, config):
-        model_name = "deepseek-ai/deepseek-llm-7b-base"
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(os.path.join(config.data_dir, config.weight_dir))
         self.records = []
         self.length = 0
         
