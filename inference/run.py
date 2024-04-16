@@ -22,7 +22,7 @@ VERSION = "v0.1"
 CLUSTER_MGR = cluster_manager.ClusterManager()
 
 CURR_PATH = os.path.abspath(os.path.dirname(__file__))
-
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 def print_welcome_msg():
     '''Print colorful welcome message to console.'''
