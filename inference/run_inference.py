@@ -11,6 +11,7 @@ import os
 import sys
 from tools import init_logger, merge_config
 from argparse import ArgumentParser
+import torch.nn.functional as F
 
 
 def main(config):
@@ -31,9 +32,15 @@ def main(config):
 
     inputs = "The following are multiple choice questions (with answers) about abstract algebra. Find all c in Z_3 such that Z_3[x]/(x^2 + c) is a field. \nA. 0\nB. 1\nC. 2\nD. 3\nAnswer:"
     outputs = model(inputs)
-    print("输出类型:", type(output))
-    print("输出形状:", output.shape)
-    print("输出数据:", output)
+    logits = outputs.logits
+    print("输出类型:", type(logits))
+    print("输出形状:", logits.shape)
+    print("输出数据:", logits)
+    
+    probabilities = F.softmax(logits, dim=-1)
+    print("输出类型:", type(probabilities))
+    print("输出形状:", probabilities.shape)
+    print("输出数据:", probabilities)
 
     duration = time.time() - start
     logger.log("Init End", str(duration) + " seconds")

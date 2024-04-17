@@ -3,6 +3,7 @@ import torch
 import numpy as np
 import time
 from tools import torch_sync
+import torch.nn.functional as F
 
 
 def cal_perf(config, tokens, duration, core_time, str_prefix):
@@ -42,7 +43,8 @@ def model_forward(model, dataloader, evaluator, config):
                 core_time_start = time.time() 
                   
                 y = model(tokens)
-                
+                logits = y.logits
+                y = F.softmax(logits, dim=-1)
                 torch_sync(config)
                 core_time += time.time() - core_time_start
                 
