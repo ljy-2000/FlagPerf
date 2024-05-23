@@ -331,7 +331,12 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
     for cfg in must_configs:
         new_case_config[cfg] = getattr(config, cfg)
 
-    run_container_cmd = "python3 run_inference.py" \
+    if (case_config["model"] == "llama3_70b"):
+        run_container_cmd = "mpirun -n 8 --allow-run-as-root "
+    else:
+        run_container_cmd = ""
+
+    run_container_cmd += "python3 run_inference.py" \
                 + f" --perf_dir " + getattr(config, "FLAGPERF_PATH") \
                 + f" --loglevel " + getattr(config, "FLAGPERF_LOG_LEVEL") \
                 + f" --vendor " + getattr(config, "VENDOR") \
@@ -349,6 +354,9 @@ def start_tasks_in_cluster(dp_path, container_name, case_config, curr_log_path,
     # Wait a moment for starting tasks.
     time.sleep(10)
 
+    CLUSTER_MGR.run_command_some_hosts_distribution_info(start_cmd, nnodes, 15, "inference")
+    # Wait a moment for starting tasks.
+    time.sleep(10)
     logger.info("3) Waiting for tasks end in the cluster...")
     logger.info("Check task log in real time from container: " +
                 curr_log_path + "/container.out.log")
